@@ -3,58 +3,711 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digitization Data Visualization</title>
-    <!-- Tailwind CSS CDN for utility classes -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- D3.js CDN -->
+    <title>123done - Universal Data Visualization</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- D3.js and TopoJSON Libraries -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Three.js CDN for 3D globe -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <!-- Link to external CSS file -->
-    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <style>
+        /* Basic Resets & Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212; /* Dark background color */
+            color: #f0f0f0; /* Light text color */
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px; /* Adjust as needed */
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header/Navbar */
+        .navbar {
+            padding: 20px 0;
+            position: relative; /* For the subtle shadow effect if needed */
+            z-index: 100;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #f0f0f0;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px; /* Space between nav items */
+        }
+
+        .nav-item {
+            color: #b0b0b0;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: #ffffff;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            flex-grow: 1; /* Allows the section to take up available vertical space */
+            position: relative;
+            overflow: hidden;
+            padding-top: 80px; /* Adjust as needed */
+            padding-bottom: 80px;
+            display: flex;
+            align-items: center; /* Vertically center content */
+        }
+
+        .hero-section .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10; /* Ensure content is above the image overlay */
+        }
+
+        .hero-content {
+            max-width: 600px; /* Adjust width of text content */
+            z-index: 20; /* Ensure content is on top */
+        }
+
+        .hero-title {
+            font-size: 64px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .hero-title .version {
+            font-size: 24px;
+            font-weight: 500;
+            color: #b0b0b0;
+            background-color: #2a2a2a; /* Background for v2.0 tag */
+            padding: 4px 10px;
+            border-radius: 5px;
+            margin-left: 15px;
+            vertical-align: middle;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: #b0b0b0;
+            line-height: 1.5;
+            margin-bottom: 40px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #007bff; /* Example blue color */
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0069d9;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: #ffffff;
+            border: 1px solid #555; /* Light border for preview button */
+        }
+
+        .btn-secondary:hover {
+            background-color: #2a2a2a;
+            border-color: #777;
+        }
+
+        .hero-image-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 40%; /* Start image from the middle, adjust as needed */
+            /* Using a placeholder image from placehold.co for demonstration */
+            background-image: url('https://placehold.co/1000x700/1a1a1a/cccccc?text=Data+Visualization+Mockup'); /* REPLACE WITH YOUR IMAGE PATH */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.3; /* Adjust opacity to make it look like an overlay */
+            z-index: 1; /* Behind the text content */
+            pointer-events: none; /* Allows clicks to pass through to elements below */
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); /* Fade from right to left */
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%); /* For webkit browsers */
+        }
+
+        /* Footer */
+        .footer {
+            padding: 30px 0;
+            border-top: 1px solid #2a2a2a; /* Subtle line above footer */
+        }
+
+        .footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stats {
+            display: flex;
+            gap: 50px; /* Space between stat items */
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #b0b0b0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .watch-video {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .watch-video:hover {
+            color: #ffffff;
+        }
+
+        .play-icon {
+            font-size: 24px;
+            color: #007bff; /* Play icon color */
+            line-height: 1; /* Adjust to properly align */
+        }
+
+        .watch-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #b0b0b0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            background-color: #1a1a1a; /* Slightly lighter dark background for this section */
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .categories-section .category-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .categories-section .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .categories-section .section-subtitle {
+            font-size: 18px;
+            color: #b0b0b0;
+            margin-bottom: 60px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid */
+            gap: 30px;
+            max-width: 1000px; /* Limit grid width */
+            margin: 0 auto;
+        }
+
+        .category-item {
+            background-color: #2a2a2a; /* Background for each item */
+            padding: 30px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+            transition: background-color 0.3s ease;
+        }
+
+        .category-item:hover {
+            background-color: #3a3a3a;
+        }
+
+        .category-icon {
+            width: 60px; /* Icon size */
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #f0f0f0; /* Icon color */
+        }
+
+        .category-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: none; /* For stroke icons */
+            stroke: currentColor; /* For stroke icons */
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Specific icon styles/adjustments */
+        .category-icon.number-icon {
+            font-size: 40px; /* For the '123 321' text icon */
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .category-icon.donut-icon svg,
+        .category-icon.pie-icon svg {
+            fill: currentColor; /* Fill for solid shapes */
+            stroke: none;
+        }
+
+        .category-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .category-variants {
+            font-size: 14px;
+            color: #b0b0b0;
+        }
+
+        /* New Section: Choropleth Map */
+        .choropleth-section {
+            background-color: #121212; /* Match body background or slightly different */
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .choropleth-section .section-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .choropleth-section .section-subtitle {
+            font-size: 18px;
+            color: #b0b0b0;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .map-controls {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .map-controls label {
+            font-size: 16px;
+            color: #f0f0f0;
+            font-weight: 500;
+        }
+
+        .map-controls select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background-color: #2a2a2a;
+            color: #f0f0f0;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            appearance: none; /* Remove default select arrow */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23f0f0f0%22%20d%3D%22M287%2C197.3L146.2%2C56.6L5.4%2C197.3H287z%22%2F%3E%3C%2Fsvg%3E'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 10px top 50%;
+            background-size: 12px auto;
+        }
+
+        .map-container {
+            width: 100%;
+            max-width: 900px; /* Max width for the map */
+            margin: 0 auto;
+            aspect-ratio: 16 / 9; /* Maintain aspect ratio */
+            background-color: #2a2a2a; /* Placeholder background for map area */
+            border-radius: 12px;
+            overflow: hidden; /* Ensure map doesn't spill */
+        }
+
+        .map-container svg {
+            display: block; /* Remove extra space below SVG */
+            width: 100%;
+            height: 100%;
+        }
+
+        .country {
+            stroke: #333;
+            stroke-width: 0.5px;
+            transition: fill 0.2s ease;
+        }
+
+        .country:hover {
+            stroke: #fff;
+            stroke-width: 1px;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 flex items-center justify-center min-h-screen">
-
-    <!-- iPhone Container (initially hidden) -->
-    <div id="iphone-container" class="iphone-container">
-        <div class="iphone-screen">
-            <p class="chart-text">
-                This chart illustrates the exponential growth in global digital data. Each bar represents a year, showing the rapid increase in zettabytes generated worldwide. This trend highlights the critical need for efficient data visualization techniques to make sense of this immense volume.
-            </p>
-            <button id="back-button" class="back-button">Back</button>
+<body>
+    <header class="navbar">
+        <div class="container">
+            <div class="logo">123done</div>
+            <nav class="nav-links">
+                <a href="#" class="nav-item">PRODUCTS</a>
+                <a href="#" class="nav-item">LIBRARY</a>
+            </nav>
         </div>
-    </div>
+    </header>
 
-    <!-- Mac Container -->
-    <div id="mac-container" class="mac-container">
-        <div class="mac-screen">
-            <!-- Initial content inside Mac screen -->
-            <div id="initial-mac-content" class="initial-content flex flex-col items-center justify-content-center w-full h-full">
-                <canvas id="globe-canvas" class="mb-8"></canvas>
-                <p class="project-text mb-8">
-                    Welcome to my project on digitization and its impact! This visualization journey explores how data is transforming our world, from complex datasets to intuitive insights. Click the button below to delve deeper into the numbers.
-                </p>
-                <button id="show-chart-button" class="action-button">Explore Data</button>
+    <main class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Universal Data Visualization <span class="version">v2.0</span></h1>
+                <p class="hero-subtitle">High-quality tool for creating charts and infographics <br>in Figma.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary">BUY FOR $59</button>
+                    <button class="btn btn-secondary">PREVIEW</button>
+                </div>
             </div>
+            <div class="hero-image-overlay">
+                <!-- This div is styled with a background image and overlay in CSS -->
+            </div>
+        </div>
+    </main>
 
-            <!-- Chart content inside Mac screen (initially hidden) -->
-            <div id="chart-mac-content" class="chart-content flex flex-col items-center justify-content-center w-full h-full">
-                <div class="d3-chart-container w-full h-full">
-                    <!-- D3.js chart will be rendered here -->
+    <footer class="footer">
+        <div class="container">
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number">100+</span>
+                    <span class="stat-label">Components</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">80+</span>
+                    <span class="stat-label">Blocks</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">4</span>
+                    <span class="stat-label">Dashboards</span>
+                </div>
+            </div>
+            <div class="watch-video">
+                <span class="play-icon">▶</span>
+                <span class="watch-text">WATCH</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Section: Essential Data Visualizations -->
+    <section class="categories-section">
+        <div class="container">
+            <div class="category-label">CATEGORIES</div>
+            <h2 class="section-title">Essential data visualizations in one place</h2>
+            <p class="section-subtitle">Use them for any dashboards, professional presentations, <br>billboards and even in your TED Talks.</p>
+
+            <div class="categories-grid">
+                <div class="category-item">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2 13C6 13 8 10 12 10C16 10 18 13 22 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 20C6 20 8 17 12 17C16 17 18 20 22 20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 6C6 6 8 3 12 3C16 3 18 6 22 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="category-title">Line Graph</div>
+                    <div class="category-variants">12 variants</div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon donut-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2ZM12 4C16.418 4 20 7.582 20 12C20 16.418 16.418 20 12 20C7.582 20 4 16.418 4 12C4 7.582 7.582 4 12 4Z" fill="currentColor"/>
+                            <path d="M12 4V12H20C20 7.582 16.418 4 12 4Z" fill="currentColor"/>
+                        </svg>
+                    </div>
+                    <div class="category-title">Donut Chart</div>
+                    <div class="category-variants">7 variants</div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon pie-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.477 2 2 6.477 2 12C2 17.523 6.477 22 12 22C17.523 22 22 17.523 22 12C22 6.477 17.523 2 12 2Z" fill="currentColor"/>
+                            <path d="M12 2V12H22C22 6.477 17.523 2 12 2Z" fill="#888"/>
+                            <path d="M12 12V22C17.523 22 22 17.523 22 12H12Z" fill="#555"/>
+                        </svg>
+                    </div>
+                    <div class="category-title">Pie Chart</div>
+                    <div class="category-variants">7 variants</div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 20V4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M4 20V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M16 20V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20 20V16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="category-title">Bar Chart (Vertical)</div>
+                    <div class="category-variants">4 variants</div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 10H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20 4H12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20 16H8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M20 20H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="category-title">Bar Chart (Horizontal)</div>
+                    <div class="category-variants">8 variants</div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon number-icon">
+                        123<br>321
+                    </div>
+                    <div class="category-title">Number</div>
+                    <div class="category-variants">12 variants</div>
+                </div>
+
+                <div class="category-item">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C8.13401 2 5 5.13401 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13401 15.866 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 11C13.1046 11 14 10.1046 14 9C14 7.89543 13.1046 7 12 7C10.8954 7 10 7.89543 10 9C10 10.1046 10.8954 11 12 11Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="category-title">Maps</div>
+                    <div class="category-variants">19 variants</div>
                 </div>
             </div>
         </div>
-        <div class="mac-bottom-bar">
-            <span>macOS Monterey</span>
+    </section>
+
+    <!-- New Section: Choropleth Map -->
+    <section class="choropleth-section">
+        <div class="container">
+            <h2 class="section-title">Global Data Insights</h2>
+            <p class="section-subtitle">Visualize various metrics across the world with our interactive choropleth map.</p>
+
+            <div class="map-controls">
+                <label for="data-select">Select Data Metric:</label>
+                <select id="data-select">
+                    <option value="population">Population (Dummy)</option>
+                    <option value="gdp">GDP (Dummy)</option>
+                    <option value="happiness">Happiness Index (Dummy)</option>
+                </select>
+            </div>
+
+            <div class="map-container" id="map-container">
+                <!-- D3.js will render the SVG map here -->
+            </div>
         </div>
-        <div class="mac-stand"></div>
-    </div>
+    </section>
 
-    <div id="tooltip" class="d3-tooltip"></div>
+    <script>
+        // D3.js Choropleth Map Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapContainer = document.getElementById('map-container');
+            const dataSelect = document.getElementById('data-select');
 
-    <!-- Link to external JavaScript file -->
-    <script src="script.js"></script>
+            let width, height;
+            let svg, projection, path, colorScale;
+            let worldData, currentMetricData;
+
+            // Dummy data for demonstration
+            const dummyData = {
+                population: {
+                    'USA': 330, 'CAN': 38, 'BRA': 212, 'CHN': 1400, 'IND': 1380,
+                    'RUS': 145, 'GBR': 67, 'FRA': 65, 'DEU': 83, 'AUS': 25,
+                    'JPN': 126, 'ZAF': 59, 'EGY': 102, 'ARG': 45, 'MEX': 128,
+                    'NGA': 206, 'IDN': 273, 'PAK': 220, 'BGD': 164, 'PHL': 109,
+                    // Add more countries as needed, using their 3-letter ISO codes
+                },
+                gdp: {
+                    'USA': 23, 'CHN': 17, 'JPN': 5, 'DEU': 4, 'GBR': 3,
+                    'IND': 3.5, 'FRA': 2.9, 'CAN': 2.2, 'BRA': 1.6, 'RUS': 1.8,
+                    // Add more dummy GDP data
+                },
+                happiness: {
+                    'FIN': 7.8, 'DNK': 7.6, 'ISL': 7.5, 'CHE': 7.5, 'NLD': 7.4,
+                    'SWE': 7.3, 'NOR': 7.3, 'NZL': 7.3, 'AUT': 7.2, 'AUS': 7.2,
+                    // Add more dummy happiness data
+                }
+            };
+
+            // Function to set up or update map dimensions
+            function setMapDimensions() {
+                width = mapContainer.clientWidth;
+                height = mapContainer.clientHeight;
+
+                // If SVG already exists, remove it to redraw
+                if (svg) {
+                    svg.remove();
+                }
+
+                // Create SVG element
+                svg = d3.select("#map-container").append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+                // Define projection
+                projection = d3.geoMercator()
+                    .scale(width / (2 * Math.PI)) // Adjust scale based on width
+                    .translate([width / 2, height / 1.5]); // Center the map
+
+                // Define path generator
+                path = d3.geoPath().projection(projection);
+            }
+
+            // Function to update map colors based on selected data
+            function updateMap(metric) {
+                currentMetricData = dummyData[metric];
+
+                // Get values for the current metric to set color scale domain
+                const values = Object.values(currentMetricData);
+                const minVal = d3.min(values);
+                const maxVal = d3.max(values);
+
+                // Define color scale (e.g., from light blue to dark blue)
+                colorScale = d3.scaleQuantize()
+                    .domain([minVal, maxVal])
+                    .range(d3.schemeBlues[9]); // Using D3's built-in color schemes
+
+                // Update country colors
+                svg.selectAll(".country")
+                    .transition()
+                    .duration(500)
+                    .attr("fill", d => {
+                        const countryCode = d.properties.iso_a3; // ISO A3 code for countries
+                        const value = currentMetricData[countryCode];
+                        return value ? colorScale(value) : "#444"; // Default color for no data
+                    });
+            }
+
+            // Function to draw the map initially
+            function drawMap() {
+                setMapDimensions();
+
+                // Load world map data (TopoJSON)
+                d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json").then(function(world) {
+                    worldData = topojson.feature(world, world.objects.countries).features;
+
+                    // Draw countries
+                    svg.selectAll(".country")
+                        .data(worldData)
+                        .enter().append("path")
+                        .attr("class", "country")
+                        .attr("d", path)
+                        .attr("fill", "#444") // Initial default fill
+                        .append("title") // Tooltip on hover
+                        .text(d => {
+                            const countryCode = d.properties.iso_a3;
+                            const value = currentMetricData ? currentMetricData[countryCode] : 'N/A';
+                            return `${d.properties.name}: ${value}`;
+                        });
+
+                    // Initial update with default selected metric
+                    updateMap(dataSelect.value);
+                }).catch(error => {
+                    console.error("Error loading world map data:", error);
+                    // Display a message to the user if map data fails to load
+                    mapContainer.innerHTML = "<p style='color: #ff6b6b; font-size: 1.2em;'>Failed to load map data. Please try again later.</p>";
+                });
+            }
+
+            // Event listener for dropdown change
+            dataSelect.addEventListener('change', function() {
+                updateMap(this.value);
+            });
+
+            // Handle window resize to redraw map
+            window.addEventListener('resize', function() {
+                drawMap(); // Redraws the entire map on resize
+            });
+
+            // Initial map drawing on page load
+            drawMap();
+        });
+    </script>
 </body>
 </html>
