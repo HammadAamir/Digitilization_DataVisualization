@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPad Website Design</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom Font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Custom animation for the button arrow on hover */
+        .custom-button:hover .button-arrow {
+            transform: translateY(-50%) translateX(5px);
+        }
+        
+        /* Styling for the decorative notch on the side of the iPad */
+        .ipad-frame::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0.5rem; /* 8px */
+            transform: translateY(-50%);
+            width: 0.25rem; /* 4px */
+            height: 6rem; /* 96px */
+            background-color: #374151; /* gray-700 */
+            border-radius: 9999px;
+        }
+
+        /* Ensure the main container takes full height on small screens */
+        @media (max-width: 768px) {
+            .ipad-frame {
+                padding: 1rem; /* Smaller padding on mobile */
+            }
+            .ipad-frame .bg-white {
+                height: auto; /* Allow height to adjust on smaller screens */
+                min-height: 500px; /* Ensure a minimum height */
+            }
+            .ipad-frame::before {
+                right: 0.25rem; /* Smaller notch on mobile */
+                height: 4rem;
+            }
+            /* Adjust layout for small screens when shrunk */
+            .main-container.shrunk .ipad-frame {
+                width: 100% !important; /* Full width on small screens */
+                margin-left: 0 !important;
+            }
+            .main-container.shrunk .left-content {
+                width: 100% !important; /* Full width on small screens */
+                margin-bottom: 1rem;
+            }
+            .main-container.shrunk {
+                flex-direction: column; /* Stack elements vertically */
+            }
+            /* Adjust iPhone size for mobile */
+            .iphone-frame {
+                width: 200px !important;
+                height: 400px !important;
+            }
+            .iphone-frame .iphone-screen {
+                padding: 10px !important;
+            }
+        }
+    </style>
+</head>
+<!-- Changed body to h-screen to ensure it takes full viewport height -->
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+
+    <!-- Main Container for Layout Change -->
+    <!-- Added p-4 to main-container to maintain overall padding -->
+    <div id="main-container" class="flex flex-col md:flex-row items-center justify-center w-full h-full transition-all duration-700 ease-in-out p-4">
+
+        <!-- Left Side Content (Initially Hidden) -->
+        <div id="left-content" class="hidden md:block w-full md:w-0 md:pr-4 opacity-0 transition-all duration-700 ease-in-out flex items-center justify-center h-full">
+            <!-- iPhone Frame -->
+            <!-- Removed inline height and max-height to allow h-full to take effect -->
+            <div class="iphone-frame relative bg-gray-900 rounded-[30px] p-2 shadow-xl flex flex-col items-center justify-center w-full h-full">
+                <!-- iPhone Notch/Speaker -->
+                <div class="absolute top-2 w-1/3 h-2 bg-gray-700 rounded-full"></div>
+                
+                <!-- iPhone Screen -->
+                <div class="iphone-screen bg-white rounded-[20px] w-full h-full p-4 flex flex-col justify-center items-center text-center overflow-hidden">
+                    <h2 class="text-xl font-bold text-gray-800 mb-2">Welcome!</h2>
+                    <p class="text-gray-600 leading-relaxed text-sm">
+                        This content is now inside the iPhone. It adapts to the phone's screen, providing a compact view.
+                    </p>
+                    <ul class="mt-4 text-gray-700 text-left text-xs w-full px-2">
+                        <li class="mb-1 flex items-center"><svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Feature 1</li>
+                        <li class="mb-1 flex items-center"><svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg> Feature 2</li>
+                    </ul>
+                </div>
+
+                <!-- iPhone Home Button -->
+                <div class="absolute bottom-2 w-8 h-8 bg-gray-700 rounded-full"></div>
+            </div>
+        </div>
+
+        <!-- iPad Frame -->
+        <div id="ipad-frame" class="ipad-frame relative bg-gray-900 rounded-[40px] p-5 shadow-2xl w-full md:max-w-4xl transition-all duration-700 ease-in-out h-full">
+            
+            <!-- iPad Screen -->
+            <!-- Changed h-[700px] to h-full to make it cover full height -->
+            <div class="bg-white rounded-[20px] h-full p-5 flex flex-col overflow-hidden">
+                <!-- Content inside the screen -->
+                <div class="flex-grow flex flex-col justify-between items-center text-center py-4">
+
+                    <!-- Top Section: Globe/Logo -->
+                    <div class="pt-10">
+                        <svg class="w-36 h-36 text-gray-800" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M86.4444 22.2222C48.8889 22.2222 26.6667 62.2222 46.6667 84.4444C66.6667 106.667 104.444 115.556 126.667 84.4444C148.889 53.3333 155.556 33.3333 115.556 33.3333C75.5556 33.3333 97.7778 22.2222 86.4444 22.2222Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+
+                    <!-- Middle Section: Text Content -->
+                    <div class="max-w-xl px-4 mt-8 mb-8">
+                        <p class="text-gray-700 leading-relaxed text-lg">
+                            A project description that outlines the main goals and objectives. This text explains the methodology, the processes involved, and the key takeaways from the work. It's designed to be informative and engaging for the reader.
+                        </p>
+                    </div>
+
+                    <!-- Bottom Section: Custom Button -->
+                    <div class="pb-10">
+                        <a href="#" id="continue-button" class="custom-button relative inline-flex items-center bg-gray-200 rounded-full py-4 pl-8 pr-14 text-gray-800 font-medium transition-colors duration-300 ease-in-out hover:bg-gray-300 shadow-md">
+                            <!-- Visible text for the button -->
+                            Continue
+                            <!-- The dark circle with the arrow -->
+                            <span class="button-arrow absolute right-2 top-1/2 -translate-y-1/2 w-12 h-12 bg-gray-800 text-white rounded-full flex items-center justify-center text-2xl font-bold transition-transform duration-300 ease-in-out">
+                                →
+                            </span>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const continueButton = document.getElementById('continue-button');
+            const ipadFrame = document.getElementById('ipad-frame');
+            const leftContent = document.getElementById('left-content');
+            const mainContainer = document.getElementById('main-container');
+
+            continueButton.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default link behavior
+
+                // Remove initial max-width from iPad frame if present
+                ipadFrame.classList.remove('md:max-w-4xl');
+                
+                // Set iPad to 75% width
+                ipadFrame.classList.remove('md:w-1/5', 'md:ml-auto', 'md:w-4/5', 'md:w-7/10', 'md:w-3/5'); // Remove old width classes
+                ipadFrame.style.width = '75%'; // Set precise width
+
+                // Make left content visible and set it to 20% width, add right padding
+                leftContent.classList.remove('hidden', 'md:w-0', 'opacity-0', 'md:w-4/5'); // Remove old width class
+                leftContent.classList.add('opacity-100', 'md:pr-4'); // Add right padding
+                leftContent.style.width = '20%'; // Set precise width
+
+                // Adjust main container to ensure flex behavior
+                mainContainer.classList.add('shrunk'); 
+                mainContainer.classList.remove('justify-center');
+                mainContainer.classList.add('justify-between'); // Ensures space between elements
+            });
+        });
+    </script>
+</body>
+</html>
