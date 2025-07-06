@@ -1,0 +1,76 @@
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    border: 2px solid #4a90e2;
+    border-radius: 8px;
+    padding: 12px 16px;
+    pointer-events: none;
+    font-size: 14px;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    z-index: 1000;
+    min-width: 140px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: opacity 0.2s ease;
+  }
+  
+  .dropdown-container {
+    z-index: 10;
+    background: #211e1e;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid black;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-family: sans-serif;
+    width: fit-content;
+  }
+  
+  .dropdown-container label {
+    margin-right: 0.5rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: white;
+  }
+
+  .dropdown-container select{
+    
+    background:#211e1e;
+    border:none;
+  }
+
+  .year-dropdown {
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: #615b5b;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  #yearSelect option:focus {
+    outline: 1cm;
+    background:#211e1e;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  }
+  
+  #yearSelect option {
+    background: #211e1e;
+    font-size:0.8rem;
+    font-family: "Lucida Console", "Courier New", monospace;
+  }
+  .dropdown-container:hover{
+    background: #464040;
+  }
+  /* .dropdown-container label:hover{
+    font-size: 1.0rem;
+  } */
+  /* #yearSelect:focus{
+    font-size: 1.1rem;
+    font-weight:bold;
+  }
+  #yearSelect:checked{
+    font-size: 1.1rem;
+    font-weight:bold;
+  } */
