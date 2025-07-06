@@ -47,21 +47,18 @@ const SankeyDiagram = () => {
 
     svg.selectAll("*").remove();
 
-    // Create a map of node names to ensure all nodes are included
-    const nodeMap = new Map();
+    // Create a map of node names to indices
+    const nodeNameToIndex = new Map();
     nodes.forEach((node, index) => {
-      nodeMap.set(node.name, { ...node, id: index });
+      nodeNameToIndex.set(node.name, index);
     });
 
-    // Ensure all source and target nodes exist
-    links.forEach(link => {
-      if (!nodeMap.has(link.source)) {
-        console.warn(`Missing source node: ${link.source}`);
-      }
-      if (!nodeMap.has(link.target)) {
-        console.warn(`Missing target node: ${link.target}`);
-      }
-    });
+    // Convert links to use node indices instead of names
+    const processedLinks = links.map(link => ({
+      source: nodeNameToIndex.get(link.source),
+      target: nodeNameToIndex.get(link.target),
+      value: link.value
+    }));
 
     const sankeyGenerator = sankey()
       .nodeWidth(15)
@@ -69,8 +66,8 @@ const SankeyDiagram = () => {
       .extent([[1, 1], [width - 1, height - 6]]);
 
     const sankeyGraph = sankeyGenerator({
-      nodes: Array.from(nodeMap.values()),
-      links: links.map(d => ({ ...d }))
+      nodes: nodes.map(d => ({ ...d })),
+      links: processedLinks
     });
 
     // Draw links
