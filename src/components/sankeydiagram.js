@@ -116,11 +116,29 @@ const SankeyDiagram = () => {
   }, []);
 
   return (
-    <div style={{ textAlign: "center", marginTop: "40px" }}>
-      <h2 style={{ fontSize: "1.5rem", marginBottom: "1rem" }}>
+    <div style={{ 
+      textAlign: "center", 
+      marginTop: "40px",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center"
+    }}>
+      <h2 style={{ 
+        fontSize: "1.5rem", 
+        marginBottom: "1rem",
+        color: "#e5e7eb"
+      }}>
         Digital Activity by Age Group (Sankey Diagram)
       </h2>
-      <svg ref={svgRef}></svg>
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%"
+      }}>
+        <svg ref={svgRef}></svg>
+      </div>
     </div>
   );
 };

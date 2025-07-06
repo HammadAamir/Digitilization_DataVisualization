@@ -89,16 +89,16 @@ function Hero() {
         </div>
       </div>
 
-      <main className="flex-grow relative overflow-hidden py-20 flex items-center">
-        <div className="max-w-screen-xl mx-auto px-5 flex justify-between items-center relative z-10">
+    <main className="flex-grow relative overflow-hidden py-20 flex items-center">
+      <div className="max-w-screen-xl mx-auto px-5 flex justify-between items-center relative z-10">
           <div className="max-w-2xl z-20">
-            <h1 className="text-6xl font-bold text-white leading-tight mb-5">
+          <h1 className="text-6xl font-bold text-white leading-tight mb-5">
               European Digitalization <span className="text-2xl font-medium text-[#b0b0b0] bg-[#2a2a2a] px-2.5 py-1 rounded align-middle ml-4">Data Visualization</span>
-            </h1>
-            <p className="text-lg text-[#b0b0b0] leading-relaxed mb-10">
+          </h1>
+          <p className="text-lg text-[#b0b0b0] leading-relaxed mb-10">
               Interactive visualizations exploring digital transformation trends <br />across European countries and demographics.
-            </p>
-            <div className="flex space-x-4">
+          </p>
+          <div className="flex space-x-4">
               <div className="px-8 py-3.5 border-none rounded-lg text-base font-semibold bg-[#007bff] text-white flex items-center justify-center">
                 <span>Name</span>
               </div>
@@ -176,8 +176,8 @@ function Hero() {
             <div className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-[#4ecdc4] rounded-full animate-pulse" style={{animationDelay: '1s'}}></div>
             <div className="absolute bottom-1/4 right-1/4 w-3 h-3 bg-[#45b7d1] rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
           </div>
-        </div>
-      </main>
+      </div>
+    </main>
       
       {/* Add custom animations for slow rotation */}
       <style jsx>{`

@@ -175,7 +175,7 @@ function ChoroplethMap() {
             .html(
               `<div style="margin-bottom: 5px;">${d.properties.NAME}</div>` +
               `<div style="font-size: 12px; opacity: 0.8;">Year: ${selectedYear}</div>` +
-              (isNaN(d.properties.percentage)
+                (isNaN(d.properties.percentage)
                 ? `<div style="color: #ff6b6b;">No Data Available</div>`
                 : `<div style="color: #4a90e2;">Access: ${d.properties.percentage.toFixed(1)}%</div>`)
             )

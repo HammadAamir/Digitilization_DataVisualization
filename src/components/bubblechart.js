@@ -297,6 +297,7 @@ const BubbleChart = () => {
       .attr("text-anchor", "middle")
       .style("font-size", "20px")
       .style("font-weight", "600")
+      .style("fill", "#e5e7eb")
       .text("E-commerce Adoption Correlation");
 
     // Legend for bubble size
@@ -316,7 +317,7 @@ const BubbleChart = () => {
       .text("Bubble Size = Turnover %")
       .style("font-size", "14px")
       .style("font-weight", "600")
-      .style("fill", "#333");
+      .style("fill", "#e5e7eb");
 
     legendSize
       .selectAll(".legend-size")
@@ -341,7 +342,7 @@ const BubbleChart = () => {
       .attr("y", (d, i) => i * 35 + 15)
       .text(d => `${d}%`)
       .style("font-size", "12px")
-      .style("fill", "#333");
+      .style("fill", "#e5e7eb");
 
     // Color legend
     const legendColor = svg
@@ -359,7 +360,7 @@ const BubbleChart = () => {
       .text("Color = Turnover %")
       .style("font-size", "14px")
       .style("font-weight", "600")
-      .style("fill", "#333");
+      .style("fill", "#e5e7eb");
 
     legendColor
       .selectAll(".legend-color")
@@ -385,7 +386,7 @@ const BubbleChart = () => {
       .attr("y", (d, i) => i * 25 + 25)
       .text(d => `${d}%`)
       .style("font-size", "12px")
-      .style("fill", "#333");
+      .style("fill", "#e5e7eb");
 
     // Cleanup tooltip on unmount
     return () => {

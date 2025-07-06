@@ -264,7 +264,7 @@ const EnterpriseRevenue = () => {
         .attr("x", d => xScale(d.value) + 5)
         .attr("y", d => yScale(d.country) + yScale.bandwidth() / 2 + 5)
         .text(d => d.value.toFixed(2) + "%")
-        .attr("fill", "#333")
+        .attr("fill", "#e5e7eb")
         .style("font-size", "12px");
 
       // RIGHT SIDE - LINE CHART
@@ -420,7 +420,7 @@ const EnterpriseRevenue = () => {
         .attr("text-anchor", "middle")
         .style("font-size", "18px")
         .style("font-weight", "600")
-        .style("fill", "white")
+        .style("fill", "#e5e7eb")
         .text("All Countries - " + selectedYear);
 
       svg
@@ -430,7 +430,7 @@ const EnterpriseRevenue = () => {
         .attr("text-anchor", "middle")
         .style("font-size", "18px")
         .style("font-weight", "600")
-        .style("fill", "white")
+        .style("fill", "#e5e7eb")
         .text(`${selectedCountries.length} Countries Selected - Over Time`);
 
     } else {
@@ -537,7 +537,7 @@ const EnterpriseRevenue = () => {
         .attr("x", d => xScale(d.value) + 5)
         .attr("y", d => yScale(d.country) + yScale.bandwidth() / 2 + 5)
         .text(d => d.value.toFixed(2) + "%")
-        .attr("fill", "#333")
+        .attr("fill", "#e5e7eb")
         .style("font-size", "12px");
 
       // Title for full bar chart
@@ -567,7 +567,7 @@ const EnterpriseRevenue = () => {
 
   // Custom styled slider + label (you can improve with CSS)
   return (
-    <div className="chart-container" ref={containerRef} style={{ width: "100%", height: "700px", paddingTop: "20px" }}>
+    <div className="chart-container" ref={containerRef} style={{ width: "100%", height: "700px", paddingTop: "20px", marginBottom: "3rem" }}>
       <style>
         {`
           input[type="range"] {

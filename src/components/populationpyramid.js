@@ -429,7 +429,7 @@ const PopulationPyramid = () => {
       .style("font-size", "20px")
       .style("font-weight", "600")
       .style("fill", "#fff")
-      .text(`Daily Internet Usage by Gender and Age Group (${selectedCountry}, 2024)`);
+      .text('Daily Internet Usage by Gender and Age Group (European Countries, 2024)');
 
     // Legend
     const legend = svg
