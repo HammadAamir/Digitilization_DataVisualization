@@ -7,9 +7,10 @@ function Hero() {
     { id: 0, icon: "🗺️", label: "Choropleth", section: "choropleth-section" },
     { id: 1, icon: "📊", label: "Population", section: "population-section" },
     { id: 2, icon: "💰", label: "Revenue", section: "revenue-section" },
-    { id: 3, icon: "🫧", label: "Bubble", section: "bubble-section" },
+    { id: 3, icon: "🔵", label: "Bubble", section: "bubble-section" },
     { id: 4, icon: "📈", label: "Diverging", section: "diverging-section" },
-    { id: 5, icon: "🌊", label: "Sankey", section: "sankey-section" }
+    { id: 5, icon: "🌊", label: "Sankey", section: "sankey-section" },
+    { id: 6, icon: "🕸️", label: "Radar", section: "radar-section" }
   ];
 
   // Scroll detection
@@ -100,10 +101,10 @@ function Hero() {
           </p>
           <div className="flex space-x-4">
               <div className="px-8 py-3.5 border-none rounded-lg text-base font-semibold bg-[#007bff] text-white flex items-center justify-center">
-                <span>Name</span>
+                <span>Hammad Aamir</span>
               </div>
               <div className="px-8 py-3.5 bg-transparent text-white border border-[#555] rounded-lg text-base font-semibold flex items-center justify-center">
-                <span>ID</span>
+                <span>S5892646</span>
               </div>
             </div>
           </div>

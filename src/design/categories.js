@@ -17,7 +17,7 @@ function Categories() {
             It includes information about internet access, online shopping, and how different age groups use the internet. 
             This helps us see how digital technology has changed across Europe.
           </p>
-        </div>
+          </div>
 
         <div className="grid grid-cols-7 gap-6 max-w-3xl mx-auto">
           {/* Choropleth (Map) */}

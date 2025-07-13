@@ -24,7 +24,7 @@ function Footer() {
         </div>
         <div className="flex items-center space-x-4">
           <a 
-            href="https://github.com" 
+            href="https://github.com/HammadAamir/Digitilization_DataVisualization" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center space-x-2 cursor-pointer transition-colors duration-300 hover:text-white"

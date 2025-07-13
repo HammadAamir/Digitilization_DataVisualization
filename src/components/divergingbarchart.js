@@ -17,7 +17,7 @@ const DivergingBarChart = () => {
         setLoading(true);
         
         // Load the dataset
-        const response = await fetch("/assets/tin00093_page_spreadsheet.xlsx");
+        const response = await fetch(process.env.PUBLIC_URL + "/assets/tin00093_page_spreadsheet.xlsx");
         const buffer = await response.arrayBuffer();
         const workbook = XLSX.read(buffer, { type: "array" });
         
@@ -129,7 +129,7 @@ const DivergingBarChart = () => {
 
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = 600;
-    const margin = { top: 60, right: 200, bottom: 120, left: 120 };
+    const margin = { top: 60, right: 200, bottom: 120, left: 180 };
 
     const width = containerWidth - margin.left - margin.right;
     const height = containerHeight - margin.top - margin.bottom;
@@ -164,22 +164,24 @@ const DivergingBarChart = () => {
       .padding(0.3);
 
     // Create tooltip
-    const tooltip = d3.select("body")
-      .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("background", "rgba(255, 255, 255, 0.95)")
-      .style("color", "#333")
-      .style("padding", "12px 15px")
-      .style("border-radius", "8px")
-      .style("font-size", "13px")
-      .style("pointer-events", "none")
-      .style("opacity", 0)
-      .style("z-index", 1000)
-      .style("box-shadow", "0 4px 20px rgba(0, 0, 0, 0.15)")
-      .style("border", "1px solid #e0e0e0")
-      .style("font-family", "Arial, sans-serif")
-      .style("min-width", "200px");
+    let tooltip = d3.select("body").select(".diverging-tooltip");
+    if (tooltip.empty()) {
+      tooltip = d3.select("body").append("div")
+        .attr("class", "diverging-tooltip")
+        .style("position", "absolute")
+        .style("background", "#23272e")
+        .style("color", "#e5e7eb")
+        .style("padding", "12px 16px")
+        .style("border-radius", "10px")
+        .style("font-size", "14px")
+        .style("pointer-events", "none")
+        .style("z-index", 1000)
+        .style("box-shadow", "0 4px 12px rgba(0,0,0,0.5)")
+        .style("border", "1.5px solid #4a90e2")
+        .style("font-family", "Inter, Arial, sans-serif")
+        .style("min-width", "200px")
+        .style("opacity", 0);
+    }
 
     // Reference line at EU average (divergence = 0)
     const zeroLine = xScale(0);
@@ -226,13 +228,12 @@ const DivergingBarChart = () => {
 
         tooltip
           .style("opacity", 1)
-          .style("display", "block")
           .html(`
-            <div style="margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #2c3e50;">${d.country}</div>
-            <div style="margin-bottom: 6px; font-size: 12px; color: #7f8c8d;">Year: ${selectedYear}</div>
-            <div style="margin-bottom: 6px; font-size: 12px; color: #34495e;">Never Used Internet: <strong>${d.value.toFixed(1)}%</strong></div>
-            <div style="margin-bottom: 6px; font-size: 12px; color: #34495e;">EU Average: <strong>${euAverage.toFixed(1)}%</strong></div>
-            <div style="font-size: 13px; font-weight: 600; color: ${d.isAboveAverage ? '#e74c3c' : '#3498db'};">Divergence: ${d.divergence > 0 ? '+' : ''}${d.divergence.toFixed(1)}%</div>
+            <div style='font-weight:700; font-size:15px; margin-bottom:6px; color:#4a90e2;'>${d.country}</div>
+            <div style='font-size:13px; margin-bottom:4px;'>Year: <span style='color:#e5e7eb;'>${selectedYear}</span></div>
+            <div style='font-size:13px; margin-bottom:4px;'>Never Used Internet: <span style='color:#ffb347; font-weight:600;'>${d.value.toFixed(1)}%</span></div>
+            <div style='font-size:13px; margin-bottom:4px;'>EU Average: <span style='color:#43bccd; font-weight:600;'>${euAverage.toFixed(1)}%</span></div>
+            <div style='font-size:13px; font-weight:600; color:${d.isAboveAverage ? '#e4572e' : '#43bccd'};'>Divergence: ${d.divergence > 0 ? '+' : ''}${d.divergence.toFixed(1)}%</div>
           `)
           .style("left", (event.pageX + 10) + "px")
           .style("top", (event.pageY - 10) + "px");
@@ -247,7 +248,7 @@ const DivergingBarChart = () => {
           .attr("stroke-width", 1)
           .attr("stroke", "#fff");
 
-        tooltip.style("opacity", 0).style("display", "none");
+        tooltip.style("opacity", 0);
       });
 
     // Y-axis (country names)
@@ -269,6 +270,27 @@ const DivergingBarChart = () => {
       .selectAll("text")
       .style("font-size", "11px")
       .style("fill", "#fff");
+
+    // X-axis label
+    chart.append("text")
+      .attr("x", width / 2)
+      .attr("y", height + 48)
+      .attr("text-anchor", "middle")
+      .style("font-size", "15px")
+      .style("fill", "#e5e7eb")
+      .style("font-weight", "600")
+      .text("Divergence from EU Average (%)");
+
+    // Y-axis label
+    chart.append("text")
+      .attr("x", -height / 2)
+      .attr("y", -70)
+      .attr("transform", "rotate(-90)")
+      .attr("text-anchor", "middle")
+      .style("font-size", "15px")
+      .style("fill", "#e5e7eb")
+      .style("font-weight", "600")
+      .text("Country");
 
     // Title
     svg
