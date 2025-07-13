@@ -3,6 +3,30 @@ import * as d3 from "d3";
 import * as XLSX from "xlsx";
 import "./choropleth.css";
 
+// Add tooltip CSS
+const tooltipStyles = `
+.bubble-tooltip {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  background: rgba(0, 0, 0, 0.95);
+  color: white;
+  border: 3px solid #4a90e2;
+  padding: 15px 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  min-width: 180px;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+}
+.bubble-tooltip.visible {
+  opacity: 1;
+}
+`;
+
 const BubbleChart = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,9 +42,9 @@ const BubbleChart = () => {
         
         // Load all three datasets
         const [buyersResponse, enterprisesResponse, turnoverResponse] = await Promise.all([
-          fetch("/assets/tin00096.xlsx"),
-          fetch("/assets/tin00111.xlsx"),
-          fetch("/assets/tin00110.xlsx")
+          fetch(process.env.PUBLIC_URL + "/assets/tin00096.xlsx"),
+          fetch(process.env.PUBLIC_URL + "/assets/tin00111.xlsx"),
+          fetch(process.env.PUBLIC_URL + "/assets/tin00110.xlsx")
         ]);
 
         const [buyersBuffer, enterprisesBuffer, turnoverBuffer] = await Promise.all([
@@ -208,6 +232,7 @@ const BubbleChart = () => {
       .attr("text-anchor", "middle")
       .style("font-size", "14px")
       .style("font-weight", "600")
+      .style("fill", "#fff")
       .text("Individuals using internet for buying goods or services (%)");
 
     chart
@@ -218,27 +243,23 @@ const BubbleChart = () => {
       .attr("text-anchor", "middle")
       .style("font-size", "14px")
       .style("font-weight", "600")
+      .style("fill", "#fff")
       .text("Enterprises having received orders online (%)");
+
+    // Add tooltip style to the document head (only once)
+    if (!document.getElementById("bubble-tooltip-style")) {
+      const style = document.createElement("style");
+      style.id = "bubble-tooltip-style";
+      style.innerHTML = tooltipStyles;
+      document.head.appendChild(style);
+    }
 
     // Tooltip
     const tooltip = d3.select(containerRef.current)
       .append("div")
-      .attr("class", "tooltip")
-      .style("position", "absolute")
-      .style("pointer-events", "none")
-      .style("opacity", 0)
-      .style("display", "none")
-      .style("background", "rgba(0, 0, 0, 0.95)")
-      .style("color", "white")
-      .style("border", "3px solid #4a90e2")
-      .style("padding", "15px 20px")
-      .style("border-radius", "10px")
-      .style("font-size", "14px")
-      .style("font-weight", "bold")
-      .style("box-shadow", "0 8px 25px rgba(0, 0, 0, 0.6)")
-      .style("min-width", "180px")
-      .style("z-index", "9999")
-      .style("font-family", "Arial, sans-serif");
+      .attr("class", "bubble-tooltip")
+      .style("left", "0px")
+      .style("top", "0px");
 
     // Bubbles
     chart
@@ -255,15 +276,12 @@ const BubbleChart = () => {
       .attr("stroke-width", 2)
       .style("cursor", "pointer")
       .on("mouseover", function(event, d) {
-        console.log("Hovering over bubble:", d);
-        
         d3.select(this)
           .attr("stroke-width", 3)
           .attr("stroke", "#4a90e2");
 
         tooltip
-          .style("opacity", 1)
-          .style("display", "block")
+          .classed("visible", true)
           .html(`
             <div style="margin-bottom: 5px;"><strong>${d.country}</strong></div>
             <div style="font-size: 12px; opacity: 0.8;">Year: ${selectedYear}</div>
@@ -271,22 +289,19 @@ const BubbleChart = () => {
             <div style="font-size: 12px; opacity: 0.8;">Enterprises with Online Orders: ${d.enterprises.toFixed(1)}%</div>
             <div style="color: #4a90e2;">E-commerce Turnover: ${d.turnover.toFixed(1)}%</div>
           `)
-          .style("left", (event.pageX + 10) + "px")
+          .style("left", (event.pageX + 20) + "px")
           .style("top", (event.pageY - 10) + "px");
       })
       .on("mousemove", function(event) {
         tooltip
-          .style("left", (event.pageX + 10) + "px")
+          .style("left", (event.pageX + 20) + "px")
           .style("top", (event.pageY - 10) + "px");
       })
       .on("mouseout", function() {
-        console.log("Mouse out from bubble");
-        
         d3.select(this)
           .attr("stroke-width", 2)
           .attr("stroke", "#fff");
-
-        tooltip.style("opacity", 0).style("display", "none");
+        tooltip.classed("visible", false);
       });
 
     // Title

@@ -6,8 +6,8 @@ import "./choropleth.css";
 function ChoroplethMap() {
   const chartRef = useRef(null);
   const [dimensions, setDimensions] = useState({
-    width: window.innerWidth * 0.8,
-    height: window.innerHeight * 0.8,
+    width: window.innerWidth * 0.96,
+    height: window.innerHeight * 0.96,
   });
 
   const [dataMap, setDataMap] = useState({});
@@ -23,8 +23,8 @@ function ChoroplethMap() {
   useEffect(() => {
     const handleResize = () => {
       setDimensions({
-        width: window.innerWidth * 0.9,
-        height: window.innerHeight * 0.5,
+        width: window.innerWidth * 0.96,
+        height: window.innerHeight * 0.96,
       });
     };
 
@@ -48,7 +48,7 @@ function ChoroplethMap() {
   }, [dataMap, dimensions, selectedYear]);
 
   const loadData = async () => {
-    const response = await fetch("/assets/tin00134_page_spreadsheet.xlsx");
+    const response = await fetch(process.env.PUBLIC_URL + "/assets/tin00134_page_spreadsheet.xlsx");
     const arrayBuffer = await response.arrayBuffer();
     const workbook = XLSX.read(arrayBuffer, { type: "array" });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -103,7 +103,7 @@ function ChoroplethMap() {
       .attr("height", dimensions.height)
       .style("margin-top", "20px");
 
-    d3.json("/assets/europe.geojson").then((geoData) => {
+    d3.json(process.env.PUBLIC_URL + "/assets/europe.geojson").then((geoData) => {
       const projection = d3.geoMercator();
       const path = d3.geoPath().projection(projection);
 
@@ -123,25 +123,8 @@ function ChoroplethMap() {
 
       const colorScale = d3.scaleSequential(d3.interpolateBlues).domain([50, 100]);
 
-      const tooltip = d3
-        .select(container)
-        .append("div")
-        .attr("class", "tooltip")
-        .style("position", "absolute")
-        .style("opacity", 0)
-        .style("background", "rgba(0, 0, 0, 0.9)")
-        .style("color", "white")
-        .style("padding", "0.75rem")
-        .style("border", "2px solid #4a90e2")
-        .style("border-radius", "0.5rem")
-        .style("box-shadow", "0 4px 8px rgba(0, 0, 0, 0.3)")
-        .style("font-family", "Arial, sans-serif")
-        .style("font-size", "14px")
-        .style("font-weight", "bold")
-        .style("pointer-events", "none")
-        .style("z-index", "1000")
-        .style("min-width", "120px")
-        .style("text-align", "center");
+      // Remove any existing choropleth tooltips before creating new ones
+      d3.select("body").selectAll(".choropleth-tooltip").remove();
 
       geoData.features.forEach((feature) => {
         const rawName = feature.properties.NAME;
@@ -166,41 +149,51 @@ function ChoroplethMap() {
         .attr("stroke", "#ffffff")
         .on("mouseover", (event, d) => {
           d3.select(event.target).attr("stroke-width", 3).attr("stroke", "#4a90e2");
-          const rect = container.getBoundingClientRect();
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
           
-          tooltip
+          // Remove any existing tooltips and create new one
+          d3.select("body").selectAll(".choropleth-tooltip").remove();
+          
+          const tooltip = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip choropleth-tooltip")
             .style("opacity", 1)
+            .style("position", "absolute")
+            .style("z-index", "1000")
+            .style("background", "#2a2a2a")
+            .style("color", "#f0f0f0")
+            .style("padding", "12px 15px")
+            .style("border-radius", "8px")
+            .style("font-size", "13px")
+            .style("pointer-events", "none")
+            .style("box-shadow", "0 4px 12px rgba(0, 0, 0, 0.5)")
+            .style("border", "1px solid #4a90e2")
+            .style("font-family", "Arial, sans-serif")
+            .style("min-width", "200px")
             .html(
-              `<div style="margin-bottom: 5px;">${d.properties.NAME}</div>` +
-              `<div style="font-size: 12px; opacity: 0.8;">Year: ${selectedYear}</div>` +
+              `<div style="margin-bottom: 8px; font-weight: 600; font-size: 14px; color: #f0f0f0;">${d.properties.NAME}</div>` +
+              `<div style="margin-bottom: 6px; font-size: 12px; color: #b0b0b0;">Year: ${selectedYear}</div>` +
                 (isNaN(d.properties.percentage)
                 ? `<div style="color: #ff6b6b;">No Data Available</div>`
-                : `<div style="color: #4a90e2;">Access: ${d.properties.percentage.toFixed(1)}%</div>`)
+                : `<div style="margin-bottom: 6px; font-size: 12px; color: #b0b0b0;">Access: <span style="color: #4a90e2; font-weight: 600;">${d.properties.percentage.toFixed(1)}%</span></div>`)
             )
-            .style("left", Math.min(x + 15, rect.width - 180) + "px")
-            .style("top", Math.min(y - 30, rect.height - 120) + "px");
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
         })
         .on("mousemove", (event) => {
-          const rect = container.getBoundingClientRect();
-          const x = event.clientX - rect.left;
-          const y = event.clientY - rect.top;
-          
-          tooltip
-            .style("left", Math.min(x + 15, rect.width - 180) + "px")
-            .style("top", Math.min(y - 30, rect.height - 120) + "px");
+          d3.select("body").selectAll(".choropleth-tooltip")
+            .style("left", (event.pageX + 10) + "px")
+            .style("top", (event.pageY - 10) + "px");
         })
         .on("mouseout", (event) => {
           d3.select(event.target).attr("stroke-width", 1).attr("stroke", "#ffffff");
-          tooltip.style("opacity", 0);
+          d3.select("body").selectAll(".choropleth-tooltip").remove();
         });
 
       // Legend
       const legendWidth = 20;
       const legendHeight = dimensions.height * 0.3;
       const legendPadding = 20;
-      const legendX = dimensions.width > 600 ? dimensions.width - 100 : legendPadding;
+      const legendX = dimensions.width > 600 ? 100 : legendPadding;
       const legendY = 200;
 
       const legendScale = d3.scaleLinear().domain([50, 100]).range([legendHeight, 0]);
@@ -241,21 +234,40 @@ function ChoroplethMap() {
   return (
     <div>
       <div className="dropdown-container" style={{ marginBottom: "1rem", textAlign: "center" }}>
-        <label htmlFor="yearSelect">Select Year: </label>
+        <label htmlFor="yearSelect" style={{ 
+          color: "#b0b0b0", 
+          fontSize: "14px", 
+          fontWeight: "600",
+          marginRight: "10px"
+        }}>Select Year: </label>
         <select
           id="yearSelect"
           value={selectedYear}
-          style={{ color: "white"}}
+          style={{ 
+            color: "#f0f0f0",
+            backgroundColor: "#2a2a2a",
+            border: "1px solid #204a90e2",
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "14px",
+            fontWeight: "500",
+            cursor: "pointer",
+            outline: "none",
+            minWidth: "50px"
+          }}
           onChange={(e) => setSelectedYear(e.target.value)}
         >
           {years.map((year) => (
-            <option key={year} value={year}>
+            <option key={year} value={year} style={{ 
+              backgroundColor: "#2a2a2a",
+              color: "#f0f0f0"
+            }}>
               {year}
             </option>
           ))}
         </select>
       </div>
-      <div ref={chartRef} className="relative w-full h-full bg-[#211e1e] rounded-lg shadow-lg overflow-hidden" 
+      <div ref={chartRef} className="relative w-full h-full" 
       
   style={{ width: dimensions.width, height: dimensions.height }} />
     </div>

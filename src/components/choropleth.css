@@ -1,19 +1,52 @@
 .tooltip {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.9);
-    color: white;
-    border: 2px solid #4a90e2;
+    background: #2a2a2a;
+    color: #f0f0f0;
+    padding: 12px 15px;
     border-radius: 8px;
-    padding: 12px 16px;
+    font-size: 13px;
     pointer-events: none;
-    font-size: 14px;
-    font-weight: bold;
-    font-family: Arial, sans-serif;
+    opacity: 1;
     z-index: 1000;
-    min-width: 140px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    border: 1px solid #4a90e2;
+    font-family: Arial, sans-serif;
+    min-width: 200px;
     transition: opacity 0.2s ease;
+  }
+
+  .tooltip-title {
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    color: #f0f0f0;
+  }
+
+  .tooltip-label {
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #b0b0b0;
+  }
+
+  .tooltip-value {
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .tooltip-value.male {
+    color: #3498db;
+  }
+
+  .tooltip-value.female {
+    color: #e74c3c;
+  }
+
+  .tooltip-value.percentage {
+    color: #4a90e2;
+  }
+
+  .tooltip-value.percentage.female {
+    color: #e74c3c;
   }
   
   .dropdown-container {
